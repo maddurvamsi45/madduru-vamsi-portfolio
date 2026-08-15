@@ -1,0 +1,32 @@
+name: Portfolio CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  validate-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate required files
+        run: |
+          test -f index.html
+          test -f style.css
+          test -f script.js
+          test -f assets/profile.png
+          test -f assets/Madduru-Vamsi-Resume.pdf
+
+      - name: Build Docker image
+        run: docker build -t madduru-vamsi-portfolio:latest .
+
+      - name: Verify Docker image
+        run: docker image inspect madduru-vamsi-portfolio:latest > /dev/null
+
+      - name: CI completed
+        run: echo "Portfolio validation and Docker build completed successfully."
